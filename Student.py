@@ -11,6 +11,7 @@ class Student():
         self.choices = choices
         self.num_softs = num_softs
         self.current_project = None
+        self.choice_idx = 0
         Student.students.append(self)
 
         if self.in_YLS:
@@ -25,12 +26,14 @@ class Student():
             if ranked_project == project:
                 return score
             score -= 1
-        
+
         return 0
 
     def find_next_preference(self):
         """returns the student's next preferred choice"""
-        return self.choices.pop(0)
+        next_preference = self.choices[self.choice_idx]
+        self.choice_idx += 1
+        return next_preference
 
     def find_next(self):
         """matches student to their next possible match"""

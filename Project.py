@@ -9,6 +9,7 @@ class Project():
         self.name = name
         self.current_YLS_picks = []
         self.current_non_YLS_picks = []
+        self.scores = {}
         self.choices = []
         self.cap = cap
         self.min_num_law_students = min_num_law_students
@@ -25,9 +26,11 @@ class Project():
         score: int = 0
 
         if student.is_preadmitted:
+            print('student preadmitted')
             score+= 3
 
         if student.preassignment == self.name:
+            print('student preassigned')
             score += math.inf
 
         score += student.numerize_student_preferences(self)
@@ -37,44 +40,60 @@ class Project():
 
         return score
 
-    def get_idx(self, applicant, picks):
-        """calculate rank of candidate for project"""
-        applicant_rank = self.choices.index(applicant)
-        print(f"Applicant rank: {applicant_rank}")
-        current_ranks = [self.choices.index(c) for c in picks]
-
-        for i, r in enumerate(current_ranks):
-            if applicant_rank < r:
-                return i
-
     def is_applicant_inserted(self, applicant, picks, for_law_students_arr: bool):
         if not for_law_students_arr:
             cap = self.cap - self.min_num_law_students
         else:
             cap = self.cap
 
+        # TO DO: order the picks before doing anything
         print(f"cap is: {cap}")
         current_picks = self.current_picks()
         # haven't exceeded capacity
         if len(current_picks) < cap:
             print(f"{self.name} capacity ({cap}) is not exceeded")
             picks.append(applicant)
-            picks = sorted(picks, key=lambda r: self.choices.index(r))
+            picks = sorted(picks, key=lambda r: self.choices.index(r)) # keep em ordered
             applicant.current_project = self
             return True
 
-        # capacity is exceeded, but student is higher ranked
-        if self.get_pick_rank(applicant) < self.get_pick_rank(picks[-1]):
-            print(f"Even though {self.name} capacity ({cap}) is exceeded, {applicant.name} is higher ranked than {picks[-1].name}")
-            idx = self.get_idx(applicant, picks)
-            print(idx)
-            picks.insert(idx, applicant)
-            for pick in picks:
-                print(pick.name)
-            replaced = picks.pop()
-            applicant.current_project = self
-            replaced.find_next()
-            return True
+        for idx, pick in enumerate(picks[::-1]):
+            print(f"Even though {self.name} capacity ({cap}) is exceeded. let's look at scores")
+            print(f"{applicant.name}'s score: {self.scores[applicant]}")
+            print(f"{pick.name}'s score: {self.scores[pick]}")
+            applicant_score = self.scores[applicant]
+            pick_score = self.scores[pick]
+            if applicant_score > pick_score:
+                # capacity is exceeded, but student is higher ranked than
+                print(f"Even though {self.name} capacity ({cap}) is exceeded, {applicant.name} is higher ranked than {pick.name}")
+                # print(idx)
+                replaced = pick
+                replace_point = picks.index(pick)
+                picks[replace_point] = applicant
+                # for pick in picks:
+                #     print(pick.name)
+                applicant.current_project = self
+                replaced.find_next()
+                return True
+  
+            if applicant_score == pick_score:
+                # capacity is exceeded, but current applicant and any of current picks are equally matched
+                user_pick = input(f"Tie! Choose between {applicant.name} and {pick.name} for {self.name}: ")
+                
+                if user_pick == applicant.name:
+                    # user chose the applicant
+                    replaced = pick
+                    replace_point = picks.index(pick)
+                    picks[replace_point] = applicant
+
+                    applicant.current_project = self
+                    replaced.find_next()
+                    return True
+                else:
+                    return False
+
+            print(f"{applicant.name}'s score is smaller than {pick.name}'s score")
+
         return False
 
     def apply_to_2(self, applicant):
@@ -94,8 +113,6 @@ class Project():
                 print(f"{applicant.name} is not a YLS student")
                 return self.is_applicant_inserted(applicant, self.current_non_YLS_picks, False)
 
-        print(f"{applicant.name} is a YLS student, but we have enough law students for {self.name}")
-        return self.is_applicant_inserted(applicant, self.current_YLS_picks, True)
+        print(f"we have enough law students for {self.name}")
 
-    def get_pick_rank(self, applicant):
-        return self.choices.index(applicant)
+        return self.is_applicant_inserted(applicant, self.current_YLS_picks, True)
