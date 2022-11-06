@@ -155,13 +155,14 @@ class MatchController():
             project_popularity_scores[project] = 0
 
         # calculate project popularity with matched applicants
-        for applicant in self.applicants.values():
+        for applicant in self.applicants.values(): 
             if applicant.current_project is not None:
                 score = 3
                 for choice in applicant.choices:
                     project_popularity_scores[choice] += score
                     score -= 1
-
+            # TODO: add softs
+            
         # print(project_popularity_scores)
         # in order of rankings
         project_popularity_scores = {k: v for k, v in sorted(project_popularity_scores.items(), key=lambda item: item[1], reverse=True)}
