@@ -9,111 +9,12 @@ class MatchController():
         2. controls the match process
         3. returns the final results
     """
-    
-    # def __init__(self, program_data, applicant_data, cap_data) -> None:
-    #     """takes XLSX file reads stuff."""
-    #     pass
 
     # for now, we'll just have pre done stuff
-    def __init__(self) -> None:
+    def __init__(self, projects, students):
 
-        self.projects = {}
-        self.applicants = {}
-
-        # initialize projects
-        self.projects['Project A'] = Project('Project A', 2, 1)
-        self.projects['Project B'] = Project('Project B', 2, 1)
-        self.projects['Project C'] = Project('Project C', 2, 0)
-
-        print("these are my projects")
-        for project in self.projects.values():
-            print(project)
-            print(project.__repr__())
-
-        print(self.projects)
-        # this will soon pull directly from the sheet itself
-        students: dict = {
-            'Ali': ["YSE",
-                    False, None,
-                    'Project A', 'Project B', 'Project C',
-                    True, False, False
-                ],
-
-            'Beatriz': ["YLS",
-                        True, None,
-                        'Project B', 'Project A', 'Project C',
-                        False, False, True
-                    ],
-
-            'Charles': ["YSE",
-                        False, None,
-                        'Project B', None, None,
-                        False, True, False
-                    ],
-
-            'Diya': ["YSE",
-                    False, None,
-                    'Project C', 'Project A', 'Project B',
-                    True, True, True
-                    ],
-
-            'Eric': ["YLS",
-                    True, None,
-                    'Project C', 'Project B', 'Project A',
-                    True, False, False
-                    ],
-
-            'Fatima': ["YSE",
-                    False, None,
-                    'Project A', 'Project C', None,
-                    False, False, False
-                    ],
-
-            'Gabriel': ["YLS",
-                        False, None,
-                        'Project B', 'Project A', 'Project C',
-                        True, False, True
-                    ],
-
-            'Hannah': ["YSE",
-                    True, 'Project B',
-                    'Project B', 'Project C', 'Project A',
-                    False, False, False
-                    ],
-
-            'Isaac': ["YLS",
-                    False, None,
-                    'Project A', 'Project C', None,
-                    True, False, False
-                    ]
-        }
-
-        # initialize students
-        for student_name, student_metadata in students.items():
-            in_YLS: bool = True if student_metadata[0] == "YLS" else False
-
-            # initialize choices for student
-            choices = student_metadata[3:6]
-            print(choices)
-            choice_objs = []
-            for proj in choices:
-                if proj is not None:
-                    choice_objs.append(self.projects[proj])
-
-            print(choice_objs)
-
-            num_softs:int = 0
-
-            for soft in student_metadata[6:]:
-                if soft:
-                    num_softs += 1
-
-            self.applicants[student_name] = Student(student_name,
-                                                    in_YLS,
-                                                    student_metadata[1],
-                                                    student_metadata[2],
-                                                    choice_objs,
-                                                    num_softs)
+        self.projects = projects
+        self.applicants = students
 
         # initialize project choices
         for project in self.projects.values():
@@ -127,6 +28,7 @@ class MatchController():
             # sort rankings
             proj_rankings = {k: v for k, v in sorted(proj_rankings.items(), key=lambda item: item[1], reverse=True)}
 
+            # print project and rankings for student (sorted)
             print(project.name)
             for k,v in proj_rankings.items():
                 print(f"{k.name}: {v}")
@@ -134,57 +36,70 @@ class MatchController():
             project.choices = [val for val in proj_rankings.keys()]
             project.scores = proj_rankings
 
-    def start_match(self):
+    def start_match(self, applicants=None):
         """begins matching process"""
-        for applicant in self.applicants.values():
+        
+        if applicants:
+            students_to_match = applicants
+        else:
+            students_to_match = self.applicants.values()
+        for applicant in students_to_match:
             # start match from first applicant
-            print(f"{applicant.name} begins their match.")
+            print(f"{applicant.name} begins their match.\n")
             applicant.find_next()
+
+    def calculate_popularity(self):
+        """after the first match, calculates popularity for
+            each project, based on admitted students"""
+
+        project_popularity_scores = {}
+
+        for project in self.projects.values():
+            # let's populate it with 0's for now
+            project_popularity_scores[project] = 0
+
+            project_picks = project.current_picks()
+
+            # calculate project popularity with matched applicants
+            for applicant in project_picks:
+                score = len(Project.projects)
+                for choice in applicant.choices: # goes down choice list in order
+                    if choice == project:
+                        project_popularity_scores[choice] += score
+                        choice.popularity_score += score
+                    score -= 1
+
+        # in order of rankings
+        project_popularity_scores = {k: v for k, v in sorted(project_popularity_scores.items(), key=lambda item: item[1], reverse=True)}
+        Project.popularity_scores = project_popularity_scores
 
     def second_match(self):
         """second matching process"""
-
-        # not necessary if number of projects = number of projects that CAN be run
-
         second_match_applicants = {}
-        second_match_projects = {}
-        project_popularity_scores = {}
 
-        # let's populate it with 0's for now
-        for project in self.projects.values():
-            project_popularity_scores[project] = 0
+        # let the user choose the project(s) to cut
+        projects_to_cut = [proj for proj in input("Which project(s) do you want to cut (Type each name separated by a comma): \n").split(', ')]
 
-        # calculate project popularity with matched applicants
-        for applicant in self.applicants.values(): 
-            if applicant.current_project is not None:
-                score = 3
-                for choice in applicant.choices:
-                    project_popularity_scores[choice] += score
-                    score -= 1
-            # TODO: add softs
-            
-        # print(project_popularity_scores)
-        # in order of rankings
-        project_popularity_scores = {k: v for k, v in sorted(project_popularity_scores.items(), key=lambda item: item[1], reverse=True)}
-        # print(project_popularity_scores)
-
-        print("The scores are")
-        for project, score in project_popularity_scores.items():
-            print(f"{project.name}: {score}")
-
-        # let the user cut the project
-        project_to_cut = input("Which project do you want to cut: ")
+        # print project(s) that got deleted
+        for project_name in projects_to_cut:
+            print(f"\n{project_name} deleted from match")
+            # print students that need to rematch
+            for name, project in self.projects.items():
+                if project_name == name:
+                    project.active = False
+                    project_picks = project.current_picks()
+                    for student in project_picks:
+                        second_match_applicants[student.name] = student
 
 
+
+        # print students that need to rematch
         for name, project in self.projects.items():
-            if name != project_to_cut: 
-                second_match_projects[name] = project
-            else: # it's the project.
+            if name in projects_to_cut:
                 project_picks = project.current_picks()
                 for student in project_picks:
                     second_match_applicants[student.name] = student
-    
-        print(f"{project_to_cut} deleted from match")
+
 
         print("The students who got cut off are")
         for student in second_match_applicants.keys():
@@ -205,6 +120,34 @@ class MatchController():
             except AttributeError:
                 # doesn't have a current place
                 print(' Did not match')
+
+    def print_summary(self):
+        """prints a comprehensive summary of projects and matches
+            and student info"""
+        for project_name, project in self.projects.items():
+            if project.active:
+                print(project_name)
+                print("=========")
+                picks = project.current_picks()
+
+                for pick in picks:
+                    print(f"{pick.name}", end ="")
+                    if pick.is_law_student:
+                        print(", law student", end ="")
+
+                    if pick.is_preadmitted:
+                        print(", was preadmitted", end ="")
+
+                    if pick.preassignment is not None:
+                        print(f", was preassigned to {pick.preassignment}", end ="")
+                    
+                    print(f", number of softs: {pick.num_softs}")
+        
+
+                print(f"\nPreference score for {project_name}: {project.popularity_score}")
+                print("\n")
+        return
+
 
     def student_results_dict(self):
         """puts the results in a dict"""
