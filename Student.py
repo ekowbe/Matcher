@@ -46,7 +46,7 @@ class Student():
             project = self.find_next_preference()
         except IndexError:
             self.current_project = None
-            print("{} did not match.\n".format(self.name))
+            print("{} has exhausted preference list.\n".format(self.name))
             return False
 
         #print(self.name, project.name)
@@ -54,6 +54,9 @@ class Student():
         if project.apply_to_2(self):
             print(f"{self.name} temp matched to {project.name}\n")
             self.current_project = project
+
+            if self.is_law_student:
+                project.num_law_students += 1
             return True
 
         self.find_next()

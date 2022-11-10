@@ -41,16 +41,25 @@ class MatchController():
         
         if applicants:
             students_to_match = applicants
+            # print(students_to_match)
+            
         else:
             students_to_match = self.applicants.values()
-        for applicant in students_to_match:
+            
+        for idx, applicant in enumerate(students_to_match):
+            print(f"Applicant {idx+1}")
+            print("-------------------")
             # start match from first applicant
-            print(f"{applicant.name} begins their match.\n")
+            print(f"\n{applicant.name} begins their match.\n")
             applicant.find_next()
 
     def calculate_popularity(self):
         """after the first match, calculates popularity for
             each project, based on admitted students"""
+
+        # reset to zero every time this is called
+        for project in self.projects.values():
+            project.popularity_score = 0
 
         project_popularity_scores = {}
 
@@ -58,7 +67,7 @@ class MatchController():
             # let's populate it with 0's for now
             project_popularity_scores[project] = 0
 
-            project_picks = project.current_picks()
+            project_picks = project.picks
 
             # calculate project popularity with matched applicants
             for applicant in project_picks:
@@ -73,44 +82,6 @@ class MatchController():
         project_popularity_scores = {k: v for k, v in sorted(project_popularity_scores.items(), key=lambda item: item[1], reverse=True)}
         Project.popularity_scores = project_popularity_scores
 
-    def second_match(self):
-        """second matching process"""
-        second_match_applicants = {}
-
-        # let the user choose the project(s) to cut
-        projects_to_cut = [proj for proj in input("Which project(s) do you want to cut (Type each name separated by a comma): \n").split(', ')]
-
-        # print project(s) that got deleted
-        for project_name in projects_to_cut:
-            print(f"\n{project_name} deleted from match")
-            # print students that need to rematch
-            for name, project in self.projects.items():
-                if project_name == name:
-                    project.active = False
-                    project_picks = project.current_picks()
-                    for student in project_picks:
-                        second_match_applicants[student.name] = student
-
-
-
-        # print students that need to rematch
-        for name, project in self.projects.items():
-            if name in projects_to_cut:
-                project_picks = project.current_picks()
-                for student in project_picks:
-                    second_match_applicants[student.name] = student
-
-
-        print("The students who got cut off are")
-        for student in second_match_applicants.keys():
-            print(student)
-
-        # with peeps who didn't match
-        print("beginning second match with popular projects and unmatched students")
-        for applicant in second_match_applicants.values():
-            print(f"{applicant.name} begins their second match.")
-            applicant.find_next()
-
     def print_results(self):
         """prints results"""
         for applicant_name, applicant in self.applicants.items():
@@ -124,13 +95,15 @@ class MatchController():
     def print_summary(self):
         """prints a comprehensive summary of projects and matches
             and student info"""
+        idx = 0
         for project_name, project in self.projects.items():
             if project.active:
-                print(project_name)
+                print(f"{project_name} ({idx})")
                 print("=========")
-                picks = project.current_picks()
-
-                for pick in picks:
+                print(f"Capacity: {project.cap}")
+                print(f"Min Law: {project.min_num_law_students}\n")
+                
+                for pick in project.picks:
                     print(f"{pick.name}", end ="")
                     if pick.is_law_student:
                         print(", law student", end ="")
@@ -145,7 +118,22 @@ class MatchController():
         
 
                 print(f"\nPreference score for {project_name}: {project.popularity_score}")
-                print("\n")
+                idx +=1
+
+        print("\nCancelled Projects")
+        print("==================")
+
+        for name, obj in self.projects.items():
+            if not obj.active:
+                print(name)
+
+        print("\nStudents who didn't match")
+        print("===========================")
+
+        for name, obj in self.applicants.items():
+            if obj.current_project is None:
+                print(name)
+
         return
 
 

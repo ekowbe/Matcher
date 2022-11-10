@@ -1,15 +1,15 @@
 """this modules runs the match"""
+from sys import argv
 import pandas as pd
 import numpy as np
 from Project import Project
 from Student import Student
 from MatchController import MatchController
 
-def run_match():
+def run_match(projects, students):
     """run the match"""
     # projects = get_projects_easy()
-    projects = get_projects()
-    students = get_students(projects)
+
     match = MatchController(projects, students)
     new_round_applicants = []
 
@@ -23,7 +23,7 @@ def run_match():
 
         match.print_summary()
 
-        projects_to_cut = [proj for proj in input("Which project(s) do you want to cut (Type each name separated by a comma or None if done): \n").split(', ')]
+        projects_to_cut = [proj for proj in input("\nWhich project(s) do you want to cut (Type each number separated by a comma or None if done): \n").split(', ')]
 
         if "None" in projects_to_cut:
             print("Matching complete!")
@@ -33,10 +33,18 @@ def run_match():
             if proj_name in projects_to_cut:
                 print(f"\n{proj_name} deleted from match\n")
                 proj_obj.active = False
-                project_picks = proj_obj.current_picks()
+                project_picks = proj_obj.picks
 
                 for student in project_picks:
                     new_round_applicants.append(student)
+
+        # print(f"applicants: {new_round_applicants}")
+        
+        # if there are no new round applicants, we end
+        if not new_round_applicants:
+            print("Matching complete!")
+            break
+
         
         for applicant in new_round_applicants:
             print(f"{applicant.name} has to retry")
@@ -46,9 +54,6 @@ def run_match():
         count += 1
 
     print("broke out of while loop")
-
-    # match.print_summary()
-    # match.get_output_csv()
 
 import xlwings as xw  # pip install xlwings
 
@@ -69,118 +74,101 @@ def splice_sheets():
 
 def get_projects_easy():
     projects = {}
-    projects['Project A'] = Project('Project A', 17, 3)
-    projects['Project B'] = Project('Project B', 16, 1)
-    projects['Project C'] = Project('Project C', 19, 3)
+    projects['Project A'] = Project('Project A', 3, 1)
+    projects['Project B'] = Project('Project B', 3, 1)
+    projects['Project C'] = Project('Project C', 3, 0)
 
     return projects
 
-# def get_students_easy(projects):
-#         students: dict = {
-#             'Ali': ["YSE",
-#                     False, None,
-#                     'Project A', 'Project B', 'Project C',
-#                     True, False, False
-#                 ],
+def get_students_easy(projects):
+        applicants = {}
+        students: dict = {
+            'Ali': ["YSE",
+                    False, None,
+                    'Project A', 'Project B', 'Project C',
+                    True, False, False
+                ],
 
-#             'Beatriz': ["YLS",
-#                         True, None,
-#                         'Project B', 'Project A', 'Project C',
-#                         False, False, True
-#                     ],
+            'Beatriz': ["YLS",
+                        True, None,
+                        'Project B', 'Project A', 'Project C',
+                        False, False, True
+                    ],
 
-#             'Charles': ["YSE",
-#                         False, None,
-#                         'Project B', None, None,
-#                         False, True, False
-#                     ],
+            'Charles': ["YSE",
+                        False, None,
+                        'Project B', None, None,
+                        False, True, False
+                    ],
 
-#             'Diya': ["YSE",
-#                     False, None,
-#                     'Project C', 'Project A', 'Project B',
-#                     True, True, True
-#                     ],
+            'Diya': ["YSE",
+                    False, None,
+                    'Project C', 'Project A', 'Project B',
+                    True, True, True
+                    ],
 
-#             'Eric': ["YLS",
-#                     True, None,
-#                     'Project C', 'Project B', 'Project A',
-#                     True, False, False
-#                     ],
+            'Eric': ["YLS",
+                    True, None,
+                    'Project C', 'Project B', 'Project A',
+                    True, False, False
+                    ],
 
-#             'Fatima': ["YSE",
-#                     False, None,
-#                     'Project A', 'Project C', None,
-#                     False, False, False
-#                     ],
+            'Fatima': ["YSE",
+                    False, None,
+                    'Project A', 'Project C', None,
+                    False, False, False
+                    ],
 
-#             'Gabriel': ["YLS",
-#                         False, None,
-#                         'Project B', 'Project A', 'Project C',
-#                         True, False, True
-#                     ],
+            'Gabriel': ["YLS",
+                        False, None,
+                        'Project B', 'Project A', 'Project C',
+                        True, False, True
+                    ],
 
-#             'Hannah': ["YSE",
-#                     True, 'Project B',
-#                     'Project B', 'Project C', 'Project A',
-#                     False, False, False
-#                     ],
+            'Hannah': ["YSE",
+                    True, 'Project B',
+                    'Project B', 'Project C', 'Project A',
+                    False, False, False
+                    ],
 
-#             'Isaac': ["YLS",
-#                     False, None,
-#                     'Project A', 'Project C', None,
-#                     True, False, False
-#                     ]
-#         }
+            'Isaac': ["YLS",
+                    False, None,
+                    'Project A', 'Project C', None,
+                    True, False, False
+                    ]
+        }
 
-#         # initialize students
-#         for student_name, student_metadata in students.items():
-#             applicants = {}
-#             is_law_student: bool = True if student_metadata[0] == "YLS" else False
+        # initialize students
+        for student_name, student_metadata in students.items():
             
+            is_law_student: bool = True if student_metadata[0] == "YLS" else False
+
+            is_preadmitted = True if student_metadata[1] == "Y" else False
+            preassignment = None if student_metadata[2] is not None else student_metadata[2]
+
             
-#             # initialize choices for student
-#             choices = student_metadata[3:6]
-#             print(choices)
-#             choice_objs = []
-#             for proj in choices:
-#                 if proj is not None:
-#                     choice_objs.append(self.projects[proj])
+            # initialize choices for student
+            choices = student_metadata[3:6]
+            print(choices)
+            choice_objs = []
+            for proj in choices:
+                if proj is not None:
+                    choice_objs.append(projects[proj])
 
-#             print(choice_objs)
+            num_softs:int = 0
 
-#             num_softs:int = 0
+            for soft in student_metadata[6:]:
+                if soft:
+                    num_softs += 1
 
-#             for soft in student_metadata[6:]:
-#                 if soft:
-#                     num_softs += 1
-
-#             is_preadmitted = True if student_metadata[1] == "Y" else False
-#             preassignment = None if student_metadata[2] is not None else studn
-#             applicants[student_name] = Student(student_name,
-#                                                     is_law_student,
-#                                                     student_metadata[1],
-#                                                     student_metadata[2],
-#                                                     choice_objs,
-#                                                     num_softs)
-
-#         # initialize project choices
-#         for project in projects.values():
-#             proj_rankings = {}
-
-#             # calculate score for each applicant
-#             for student in applicants.values():
-#                 student_score: int = project.calculate_student_score(student)
-#                 proj_rankings[student] = student_score
-
-#             # sort rankings
-#             proj_rankings = {k: v for k, v in sorted(proj_rankings.items(), key=lambda item: item[1], reverse=True)}
-
-#             print(project.name)
-#             for k,v in proj_rankings.items():
-#                 print(f"{k.name}: {v}")
-
-#             project.choices = [val for val in proj_rankings.keys()]
-#             project.scores = proj_rankings
+            
+            applicants[student_name] = Student(student_name,
+                                                    is_law_student,
+                                                    is_preadmitted,
+                                                    preassignment,
+                                                    choice_objs,
+                                                    num_softs)
+        return applicants
 
 def get_projects():
     projects = {}
@@ -191,8 +179,8 @@ def get_projects():
 
     # instantiate objs
     for project_dict in project_dicts:
-        projects[project_dict['name']] = Project(project_dict['name'], 
-                                                 project_dict['cap'], 
+        projects[project_dict['name']] = Project(project_dict['name'],
+                                                 project_dict['cap'],
                                                  project_dict['min_num_law_students'])
     return projects
 
@@ -273,5 +261,16 @@ def get_students(projects):
 
     return students
 
+def main():
+    if len(argv) == 2:
+        if argv[1] == "easy":
+            projects = get_projects_easy()
+            students = get_students_easy(projects)
+    else:
+        projects = get_projects()
+        students = get_students(projects)
+    
+    run_match(projects, students)
+
 if __name__ == '__main__':
-    run_match()
+    main()

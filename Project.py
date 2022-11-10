@@ -9,6 +9,7 @@ class Project():
     def __init__(self, name, cap, min_num_law_students):
         self.name = name
         self.active = True
+        self.picks = []
         self.current_YLS_picks = []
         self.current_non_YLS_picks = []
         self.scores = {}
@@ -16,6 +17,7 @@ class Project():
         self.cap = cap
         self.min_num_law_students = min_num_law_students
         self.popularity_score = 0
+        self.num_law_students = 0
         Project.projects.append(self)
 
     def current_picks(self):
@@ -44,25 +46,27 @@ class Project():
 
         return score
 
-    def is_applicant_inserted(self, applicant, picks, for_law_students_arr: bool):
-        if not for_law_students_arr:
+    def is_applicant_inserted(self, applicant, picks, for_law_students: bool):
+        if not for_law_students:
             cap = self.cap - self.min_num_law_students
         else:
             cap = self.cap
+            
 
-        # TO DO: order the picks before doing anything
-        # print(f"cap is: {cap}")
-        current_picks = self.current_picks()
         # haven't exceeded capacity
-        if len(current_picks) < cap:
-            print(f"{self.name} capacity ({cap}) is not exceeded\n")
+        if len(picks) < cap:
+            if not for_law_students:
+                print(f"{self.name}'s non-law capacity ({cap}) is not exceeded\n")
+            else:
+                print(f"{self.name}'s max capacity ({cap}) is not exceeded\n")
             picks.append(applicant)
             picks = sorted(picks, key=lambda r: self.choices.index(r)) # keep em ordered
             applicant.current_project = self
             return True
 
-        for idx, pick in enumerate(current_picks[::-1]):
-            print(f"Even though {self.name} capacity ({cap}) is exceeded. let's look at scores\n")
+        print(f"Even though {self.name} capacity ({cap}) is exceeded. let's look at scores\n")
+        for idx, pick in enumerate(picks[::-1]):
+            
             print(f"{applicant.name}'s score: {self.scores[applicant]}")
             print(f"{pick.name}'s score: {self.scores[pick]}")
             applicant_score = self.scores[applicant]
@@ -102,21 +106,25 @@ class Project():
 
     def apply_to_2(self, applicant):
         print(f"\n{applicant.name} tentatively applies to {self.name}\n")
+
+        if not self.active:
+            print(f"{self.name} has been cancelled")
+            return False
+
         print(f"{self.name}'s current picks are:")
-        current_picks = self.current_picks()
+        current_picks = self.picks
         for pick in current_picks:
             print(pick.name)
         print(f"\n{self.name}'s capacity is {self.cap}\n")
 
-        if len(self.current_YLS_picks) < self.min_num_law_students:
-            print(f"We still need {self.min_num_law_students-len(self.current_YLS_picks)} law student for {self.name}\n")
-            if applicant.is_law_student:
-                print(f"{applicant.name} is a YLS student\n")
-                return self.is_applicant_inserted(applicant, self.current_YLS_picks, True)
-            else:
-                print(f"{applicant.name} is not a YLS student\n")
-                return self.is_applicant_inserted(applicant, self.current_non_YLS_picks, False)
+        if self.num_law_students < self.min_num_law_students:
+            print(f"We still need {self.min_num_law_students-self.num_law_students} law student(s) for {self.name}\n")
+        else:
+            print(f"we have enough law students for {self.name}\n")
 
-        print(f"we have enough law students for {self.name}\n")
-
-        return self.is_applicant_inserted(applicant, self.current_YLS_picks, True)
+        if applicant.is_law_student:
+            print(f"{applicant.name} is a YLS student\n")
+            return self.is_applicant_inserted(applicant, self.picks, True)
+        else:
+            print(f"{applicant.name} is not a YLS student\n")
+            return self.is_applicant_inserted(applicant, self.picks, False)
