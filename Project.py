@@ -33,7 +33,7 @@ class Project():
 
         if student.is_preadmitted:
             # print('student preadmitted')
-            score+= incrementer
+            score += incrementer
 
         if student.preassignment == self.name:
             # print('student preassigned')
@@ -105,7 +105,7 @@ class Project():
 
         return False
 
-    def apply(self, applicant):
+    def apply_to(self, applicant):
         print(f"\n{applicant.name} tentatively applies to {self.name}\n")
 
         if not self.active:

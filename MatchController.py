@@ -29,7 +29,8 @@ class MatchController():
             proj_rankings = {k: v for k, v in sorted(proj_rankings.items(), key=lambda item: item[1], reverse=True)}
 
             # print project and rankings for student (sorted)
-            print(project.name)
+            print(f"\nStudent Scores for {project.name}")
+            print("=================" + "="*len(project.name))
             for k,v in proj_rankings.items():
                 print(f"{k.name}: {v}")
 
@@ -37,20 +38,34 @@ class MatchController():
             project.scores = proj_rankings
 
     def start_match(self, applicants=None):
-        """begins matching process"""
-        
+        """begins matching process
+
+            If applicants is not None, it means we have specified 
+            the group of students who are participating in the match."""
+
         if applicants:
             students_to_match = applicants
-            # print(students_to_match)
-            
         else:
             students_to_match = self.applicants.values()
-            
+
+        # start match from first applicant
         for idx, applicant in enumerate(students_to_match):
             print(f"\nApplicant {idx+1}")
             print("===========")
-            # start match from first applicant
+
             print(f"\n{applicant.name} begins their match.\n")
+
+            # check preassignments first. if applicant is preassigned apply to that first
+            if applicant.preassignment is not None:
+                preassigned_project = self.projects[applicant.preassignment]
+                print(f"\n{applicant.name} is preassigned to {preassigned_project.name}")
+
+                # if applicant is able to apply then we move on to the next student
+                if preassigned_project.apply_to(applicant):
+                    continue
+
+            # either applicant is not preassigned
+            # or he wasn't able to apply to his preassignment because it's cancelled
             applicant.find_next()
 
     def calculate_popularity(self):
@@ -82,16 +97,6 @@ class MatchController():
         project_popularity_scores = {k: v for k, v in sorted(project_popularity_scores.items(), key=lambda item: item[1], reverse=True)}
         Project.popularity_scores = project_popularity_scores
 
-    def print_results(self):
-        """prints results"""
-        for applicant_name, applicant in self.applicants.items():
-            print(applicant_name)
-            try:
-                print(' ', applicant.current_project.name)
-            except AttributeError:
-                # doesn't have a current place
-                print(' Did not match')
-
     def print_summary(self):
         """prints a comprehensive summary of projects and matches
             and student info"""
@@ -116,7 +121,9 @@ class MatchController():
                     if pick.preassignment is not None:
                         print(f", was preassigned to {pick.preassignment}", end ="")
                     
-                    print(f", number of softs: {pick.num_softs}")
+                    print(f", number of softs: {pick.num_softs}", end="")
+
+                    print(f", student score: {project.scores[pick]}")
         
                 # print preference score
                 print(f"\nPreference score for {project_name}: {project.popularity_score}\n")
@@ -140,28 +147,42 @@ class MatchController():
 
         return
 
+    def resize_results_dict(self):
+        """resizes the dict so it can be df'ed"""
+        results = self.student_results_dict()
+        max_len = 0
+
+        for matches in results.values():
+            if len(matches) > max_len:
+                max_len = len(matches)
+        
+        for name, matches in results.items():
+            if len(matches) < max_len:
+                results[name] = matches + [None] * (max_len - len(matches))
+        
+        return results
 
     def student_results_dict(self):
         """puts the results in a dict"""
         results_dict = {}
 
-        for name, applicant_obj in self.applicants.items():
-            try:
-                results_dict[name] = applicant_obj.current_project.name
-            except AttributeError:
-                results_dict[name] = 'Did not match'
+        for name, proj_obj in self.projects.items():
+            if proj_obj.active:
+                results_dict[name] = [pick.name for pick in proj_obj.picks]
 
         return results_dict
 
     def get_output_csv(self):
-        results = self.student_results_dict()
+        results = self.resize_results_dict()
+        # print(results)
 
         results_df = pd.DataFrame.from_dict(
             results,
-            orient='index'
+            orient='columns'
         )
 
-        results_df = results_df.reset_index()
-        results_df.columns = ['Candidate', 'Matched Program']
+        # results_df = results_df.reset_index()
+        # results_df.columns = ['Candidate', 'Matched Program']
+        results_df.to_csv('results.csv',index=False)
+        # df.to_csv('filename.txt', sep=' ', header=False)
 
-        results_df.to_csv('results.csv', index=False)

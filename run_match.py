@@ -6,6 +6,7 @@ from Project import Project
 from Student import Student
 from MatchController import MatchController
 
+
 def run_match(projects, students):
     """run the match"""
     # projects = get_projects_easy()
@@ -26,11 +27,12 @@ def run_match(projects, students):
 
         projects_to_cut = []
 
-        # projects_to_cut = [int(proj_num) for proj_num in input("\nWhich project(s) do you want to cut (Type each number separated by a comma or None if done): \n").split(', ')]
         valid_input = False
-        
+
+        # keep asking for input until it's valid
         while not valid_input:
-            projects_to_cut = [proj_num for proj_num in input("\nWhich project(s) do you want to cut (Type each number separated by a comma or None if done): \n").split(',')]
+            projects_to_cut = [proj_num for proj_num in input(
+                "\nWhich project(s) do you want to cut (Type each number separated by a comma or None if done): \n").split(',')]
             # print(projects_to_cut)
 
             # error checking
@@ -62,6 +64,7 @@ def run_match(projects, students):
                 # print(idx)
                 proj_obj = list(projects.values())[idx]
                 proj_obj.active = False
+                print(f"\nYou cancelled {proj_obj.name}\n")
                 project_picks = proj_obj.picks
 
                 # figure out students who need to apply
@@ -71,33 +74,19 @@ def run_match(projects, students):
                 # if there are no new round applicants, we end
                 if not new_round_applicants:
                     print("There are no students to match\n")
+                    match_complete = True
                     break
 
             # show the user the peeps who have to reapply
             for applicant in new_round_applicants:
                 print(f"{applicant.name} has to retry")
 
-            match.start_match(new_round_applicants)
 
         count += 1
     print("broke out of while loop")
 
-import xlwings as xw  # pip install xlwings
+    match.get_output_csv()
 
-EXCEL_FILE = 'F22 formatted.xlsx'
-# OUTPUT_DIR = Path(__file__).parent / 'Output'
-
-
-def splice_sheets():
-
-    with xw.App(visible=False) as app:
-        wb = app.books.open(EXCEL_FILE)
-        for sheet in wb.sheets:
-            wb_new = app.books.add()
-            sheet.copy(after=wb_new.sheets[0])
-            wb_new.sheets[0].delete()
-            wb_new.save(f'{sheet.name}.xlsx')
-            wb_new.close()
 
 def get_projects_easy():
     projects = {}
@@ -107,95 +96,103 @@ def get_projects_easy():
 
     return projects
 
+
 def get_students_easy(projects):
-        applicants = {}
-        students: dict = {
-            'Ali': ["YSE",
-                    False, None,
-                    'Project A', 'Project B', 'Project C',
-                    True, False, False
+    applicants = {}
+    students: dict = {
+        'Ali': ["YSE",
+                False, None,
+                'Project A', 'Project B', 'Project C',
+                True, False, False
                 ],
 
-            'Beatriz': ["YLS",
-                        True, None,
-                        'Project B', 'Project A', 'Project C',
-                        False, False, True
-                    ],
-
-            'Charles': ["YSE",
-                        False, None,
-                        'Project B', None, None,
-                        False, True, False
-                    ],
-
-            'Diya': ["YSE",
-                    False, None,
-                    'Project C', 'Project A', 'Project B',
-                    True, True, True
-                    ],
-
-            'Eric': ["YLS",
+        'Beatriz': ["YLS",
                     True, None,
-                    'Project C', 'Project B', 'Project A',
-                    True, False, False
+                    'Project B', 'Project A', 'Project C',
+                    False, False, True
                     ],
 
-            'Fatima': ["YSE",
+        'Charles': ["YSE",
                     False, None,
-                    'Project A', 'Project C', None,
-                    False, False, False
+                    'Project B', None, None,
+                    False, True, False
                     ],
 
-            'Gabriel': ["YLS",
-                        False, None,
-                        'Project B', 'Project A', 'Project C',
-                        True, False, True
-                    ],
+        'Diya': ["YSE",
+                 False, None,
+                 'Project C', 'Project A', 'Project B',
+                 True, True, True
+                 ],
 
-            'Hannah': ["YSE",
-                    True, 'Project B',
-                    'Project B', 'Project C', 'Project A',
-                    False, False, False
-                    ],
+        'Eric': ["YLS",
+                 True, None,
+                 'Project C', 'Project B', 'Project A',
+                 True, False, False
+                 ],
 
-            'Isaac': ["YLS",
+        'Fatima': ["YSE",
+                   False, None,
+                   'Project A', 'Project C', None,
+                   False, False, False
+                   ],
+
+        'Gabriel': ["YLS",
                     False, None,
-                    'Project A', 'Project C', None,
-                    True, False, False
-                    ]
-        }
+                    'Project B', 'Project A', 'Project C',
+                    True, False, True
+                    ],
 
-        # initialize students
-        for student_name, student_metadata in students.items():
-            
-            is_law_student: bool = True if student_metadata[0] == "YLS" else False
+        'Hannah': ["YSE",
+                   True, 'Project B',
+                   'Project A', 'Project C', 'Project B',
+                   False, False, False
+                   ],
 
-            is_preadmitted = True if student_metadata[1] == "Y" else False
-            preassignment = None if student_metadata[2] is not None else student_metadata[2]
+        'Isaac': ["YLS",
+                  False, None,
+                  'Project A', 'Project C', None,
+                  True, False, False
+                  ]
+    }
 
-            
-            # initialize choices for student
-            choices = student_metadata[3:6]
-            print(choices)
-            choice_objs = []
-            for proj in choices:
-                if proj is not None:
-                    choice_objs.append(projects[proj])
+    # initialize students
+    for student_name, student_metadata in students.items():
 
-            num_softs:int = 0
+        is_law_student: bool = True if student_metadata[0] == "YLS" else False
 
-            for soft in student_metadata[6:]:
-                if soft:
-                    num_softs += 1
+        is_preadmitted = True if student_metadata[1] == "Y" else False
+        preassignment = None if student_metadata[2] is None else student_metadata[2]
 
-            
-            applicants[student_name] = Student(student_name,
-                                                    is_law_student,
-                                                    is_preadmitted,
-                                                    preassignment,
-                                                    choice_objs,
-                                                    num_softs)
-        return applicants
+        # if student_metadata[2] is not None:
+        #     for name, obj in projects.items():
+        #         if name == student_metadata[2]:
+        #             preassignment = obj
+        #             break
+        # else:
+        #     preassignment = None
+
+        # initialize choices for student
+        choices = student_metadata[3:6]
+        print(choices)
+        choice_objs = []
+        for proj in choices:
+            if proj is not None:
+                choice_objs.append(projects[proj])
+
+        num_softs: int = 0
+
+        for soft in student_metadata[6:]:
+            if soft:
+                num_softs += 1
+
+        applicants[student_name] = Student(student_name,
+                                           is_law_student,
+                                           is_preadmitted,
+                                           preassignment,
+                                           choice_objs,
+                                           num_softs)
+    return applicants
+
 
 def get_projects():
     projects = {}
@@ -211,6 +208,7 @@ def get_projects():
                                                  project_dict['min_num_law_students'])
     return projects
 
+
 def get_students(projects):
     students = {}
     student_data = pd.read_csv('student_data.csv')
@@ -222,7 +220,7 @@ def get_students(projects):
         name = student_dict['name']
         print(name)
 
-        #check if they're a law student
+        # check if they're a law student
         degrees = student_dict['degrees']
         print(f'Degrees: {degrees}')
         if "JD" in degrees or "LLM" in degrees:
@@ -278,15 +276,16 @@ def get_students(projects):
             is_previously_unsuccessful = False
 
         students[name] = Student(name,
-                                is_law_student,
-                                is_preadmitted,
-                                preassignment,
-                                choices,
-                                num_softs)
+                                 is_law_student,
+                                 is_preadmitted,
+                                 preassignment,
+                                 choices,
+                                 num_softs)
 
         print('\n')
 
     return students
+
 
 def main():
     if len(argv) == 2:
@@ -296,8 +295,9 @@ def main():
     else:
         projects = get_projects()
         students = get_students(projects)
-    
+
     run_match(projects, students)
+
 
 if __name__ == '__main__':
     main()

@@ -35,12 +35,11 @@ class Student():
             self.choice_idx += 1
             if next_preference.active:
                 break
-        
+
         return next_preference
 
     def find_next(self):
         """matches student to their next possible match"""
-
         try:
             project = self.find_next_preference()
         except IndexError:
@@ -48,8 +47,7 @@ class Student():
             print("{} has exhausted preference list.\n".format(self.name))
             return False
 
-        #print(self.name, project.name)
-
+        # tentative application
         if project.apply_to(self):
             print(f"{self.name} temp matched to {project.name}\n")
             self.current_project = project
