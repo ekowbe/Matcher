@@ -14,45 +14,72 @@ def run_match(projects, students):
     new_round_applicants = []
 
     count = 1
-    while True:
+    match_complete = False
+    while not match_complete:
         match.start_match(new_round_applicants)
         match.calculate_popularity()
 
-        print(f"Match {count}!")
-        print("------------\n")
+        print(f"Match {count}")
+        print("=======\n")
 
         match.print_summary()
 
-        projects_to_cut = [proj for proj in input("\nWhich project(s) do you want to cut (Type each number separated by a comma or None if done): \n").split(', ')]
+        projects_to_cut = []
 
-        if "None" in projects_to_cut:
-            print("Matching complete!")
-            break
+        # projects_to_cut = [int(proj_num) for proj_num in input("\nWhich project(s) do you want to cut (Type each number separated by a comma or None if done): \n").split(', ')]
+        valid_input = False
         
-        for proj_name, proj_obj in projects.items():
-            if proj_name in projects_to_cut:
-                print(f"\n{proj_name} deleted from match\n")
+        while not valid_input:
+            projects_to_cut = [proj_num for proj_num in input("\nWhich project(s) do you want to cut (Type each number separated by a comma or None if done): \n").split(',')]
+            # print(projects_to_cut)
+
+            # error checking
+            if projects_to_cut == ["None"]:
+                print("Okay. If there are no more projects to cut, matching complete!\n")
+                valid_input = True
+                match_complete = True
+                break
+
+            # if it's not none, it should be comma separated ints
+            try:
+                projects_to_cut = [int(el) for el in projects_to_cut]
+            except ValueError:
+                print("invalid input. Try again.\n")
+                continue
+
+            # they are all ints, but are they in range?
+            for project_num in projects_to_cut:
+                if project_num < 1 or project_num > len(projects):
+                    print("invalid input. Try again.\n")
+                    continue
+
+            # while loop will stop on next run
+            valid_input = True
+
+            # figure out projects we need to cut
+            for proj_num in projects_to_cut:
+                idx = proj_num-1
+                # print(idx)
+                proj_obj = list(projects.values())[idx]
                 proj_obj.active = False
                 project_picks = proj_obj.picks
 
+                # figure out students who need to apply
                 for student in project_picks:
                     new_round_applicants.append(student)
 
-        # print(f"applicants: {new_round_applicants}")
-        
-        # if there are no new round applicants, we end
-        if not new_round_applicants:
-            print("Matching complete!")
-            break
+                # if there are no new round applicants, we end
+                if not new_round_applicants:
+                    print("There are no students to match\n")
+                    break
 
-        
-        for applicant in new_round_applicants:
-            print(f"{applicant.name} has to retry")
-        
-        match.start_match(new_round_applicants)
+            # show the user the peeps who have to reapply
+            for applicant in new_round_applicants:
+                print(f"{applicant.name} has to retry")
+
+            match.start_match(new_round_applicants)
 
         count += 1
-
     print("broke out of while loop")
 
 import xlwings as xw  # pip install xlwings

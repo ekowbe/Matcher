@@ -47,8 +47,8 @@ class MatchController():
             students_to_match = self.applicants.values()
             
         for idx, applicant in enumerate(students_to_match):
-            print(f"Applicant {idx+1}")
-            print("-------------------")
+            print(f"\nApplicant {idx+1}")
+            print("===========")
             # start match from first applicant
             print(f"\n{applicant.name} begins their match.\n")
             applicant.find_next()
@@ -95,14 +95,16 @@ class MatchController():
     def print_summary(self):
         """prints a comprehensive summary of projects and matches
             and student info"""
-        idx = 0
+        idx = 1
         for project_name, project in self.projects.items():
+            # prints only if project is active
             if project.active:
                 print(f"{project_name} ({idx})")
-                print("=========")
+                print("="*len(project_name))
                 print(f"Capacity: {project.cap}")
                 print(f"Min Law: {project.min_num_law_students}\n")
                 
+                # print other factors
                 for pick in project.picks:
                     print(f"{pick.name}", end ="")
                     if pick.is_law_student:
@@ -116,10 +118,11 @@ class MatchController():
                     
                     print(f", number of softs: {pick.num_softs}")
         
-
-                print(f"\nPreference score for {project_name}: {project.popularity_score}")
+                # print preference score
+                print(f"\nPreference score for {project_name}: {project.popularity_score}\n")
                 idx +=1
-
+        
+        # print cancelled projects
         print("\nCancelled Projects")
         print("==================")
 
@@ -127,6 +130,7 @@ class MatchController():
             if not obj.active:
                 print(name)
 
+        # print students who have to rematch
         print("\nStudents who didn't match")
         print("===========================")
 
@@ -161,4 +165,3 @@ class MatchController():
         results_df.columns = ['Candidate', 'Matched Program']
 
         results_df.to_csv('results.csv', index=False)
-

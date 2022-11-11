@@ -17,10 +17,9 @@ class Student():
         if self.is_law_student:
             Student.law_students.append(self)
 
-    # def __repr__(self):
-    def numerize_student_preferences(self, project)->int:
+    def numerize_student_preferences(self, project, num_projects)->int:
         """looks at student's preferences and gives appropriate score"""
-        score: int = 3
+        score: int = num_projects
 
         for ranked_project in self.choices:
             if ranked_project == project:
@@ -51,7 +50,7 @@ class Student():
 
         #print(self.name, project.name)
 
-        if project.apply_to_2(self):
+        if project.apply_to(self):
             print(f"{self.name} temp matched to {project.name}\n")
             self.current_project = project
 

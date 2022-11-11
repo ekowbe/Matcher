@@ -39,7 +39,7 @@ class Project():
             # print('student preassigned')
             score += math.inf
 
-        score += student.numerize_student_preferences(self)
+        score += student.numerize_student_preferences(self,len(Project.projects))
 
         if student.num_softs > 0:
             score += incrementer
@@ -86,10 +86,11 @@ class Project():
   
             if applicant_score == pick_score:
                 # capacity is exceeded, but current applicant and any of current picks are equally matched
-                user_pick = input(f"\n Choose between {applicant.name} and {pick.name} for {self.name}: ")
+                user_pick = int(input(f"\n Choose between {applicant.name} (1) and {pick.name} (2) for {self.name}. (Type 1 or 2): "))
                 
-                if user_pick == applicant.name:
+                if user_pick == 1:
                     # user chose the applicant
+                    print(f"You chose {applicant.name}")
                     replaced = pick
                     replace_point = picks.index(pick)
                     picks[replace_point] = applicant
@@ -104,7 +105,7 @@ class Project():
 
         return False
 
-    def apply_to_2(self, applicant):
+    def apply(self, applicant):
         print(f"\n{applicant.name} tentatively applies to {self.name}\n")
 
         if not self.active:
