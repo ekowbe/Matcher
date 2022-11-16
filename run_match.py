@@ -238,10 +238,12 @@ def get_students(projects):
 
         # check if pre_assigned
         preassignment = None
-        if is_preadmitted:
-            assignment = student_dict['assign']
-            if assignment is not None:
-                preassignment = list(projects)[idx]
+
+        assignment = student_dict['assign']
+        if assignment is not None:
+            assignment = int(assignment) - 1
+            preassignment = list(projects)[assignment]
+
         print(f'Admitted: {preassignment}')
         # rankings
         rankings = student_dict['rankings'].split(',')

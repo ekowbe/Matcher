@@ -4,7 +4,7 @@ class Project():
     """Class representing a Project"""
     projects = []
     popularity_scores = {}
-    max_num_projects = 2
+    # max_num_projects = 2
 
     def __init__(self, name, cap, min_num_law_students):
         self.name = name

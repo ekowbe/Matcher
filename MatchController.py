@@ -40,13 +40,17 @@ class MatchController():
     def start_match(self, applicants=None):
         """begins matching process
 
-            If applicants is not None, it means we have specified 
+            If applicants is not None, it means we have specified
             the group of students who are participating in the match."""
 
         if applicants:
             students_to_match = applicants
         else:
             students_to_match = self.applicants.values()
+
+        # match law students
+
+        # match non-law students
 
         # start match from first applicant
         for idx, applicant in enumerate(students_to_match):
