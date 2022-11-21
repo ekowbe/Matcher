@@ -37,6 +37,26 @@ class MatchController():
             project.choices = [val for val in proj_rankings.keys()]
             project.scores = proj_rankings
 
+    def tentatively_match(self, applicants: list[Student]):
+        for idx, applicant in enumerate(applicants):
+            print(f"\nApplicant {idx+1}")
+            print("===========")
+
+            print(f"\n{applicant.name} begins their match.\n")
+
+            # check preassignments first. if applicant is preassigned apply to that first
+            if applicant.preassignment is not None:
+                preassigned_project = self.projects[applicant.preassignment]
+                print(f"\n{applicant.name} is preassigned to {preassigned_project.name}")
+
+                # if applicant is able to apply then we move on to the next student
+                if preassigned_project.apply_to(applicant):
+                    continue
+
+            # either applicant is not preassigned
+            # or he wasn't able to apply to his preassignment because it's cancelled
+            applicant.find_next()
+
     def start_match(self, applicants=None):
         """begins matching process
 
@@ -49,6 +69,9 @@ class MatchController():
             students_to_match = self.applicants.values()
 
         # match law students
+        law_students = {v for v in students_to_match if v.is_law_student}
+
+
 
         # match non-law students
 
