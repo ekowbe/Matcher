@@ -1,50 +1,50 @@
-name,degrees,admitted,assign,rankings,in_final_year,is_capstone_project,is_previously_unsuccessful
-Winterberry Holly,JD,,"1","1,2,3",,,
-Oriental Bittersweet,PhD,,,"4,8,5,2",,,
-Burning Bush,MESc,,,"6,7,8,3,2,4",,,
-Flowering Dogwood ,MF,"Y",,"1,5,9",Y,,
-Shrub Dogwood,MEM,,,"2,5,3",Y,Y,
-Tupelo,MEM,,"3","3,2,5,1,9,8,6,4,7",Y,Y,
-Mapleleaf viburnum,MEM,,"3",3,Y,Y,
-Arrowbush,JD,"Y","1","1,9",,,
-Sweet pepperbush,JD,,,"1,6,3,4,7,5,2,9",,,
-Huckleberry,JD,,,"6,4,8,1,2,7,8,5,9",,,
-Mountain Laurel,JD,,,"1,6,7",,,
-Highbush blueberry,JD,"Y","1",1,,,
-Lowbush Blueberry,"MEM, MBA",,,4,,,Y
-(rare) Lowbush Blueberry,MEM,,,"8,6,2,4",,,Y
-Speckled Alder,"JD, MEM","Y",,"6,2,1,3,8",,,
-Black Birch,JD,"Y",,"9,1,4,6,7,8,3,2,5",,,
-Grey Birch,JD,,,"9,1",,,
-Hophornbeam,JD,,"9","9,4,3,8,6",,,
-American beech,"JD, MEM","Y",,"4,9,1,5",Y,,
-White Oak,MEM,,"4",4,,,Y
-Swamp white oak,JD,,,"4,3,7",,,
-Scarlet oak,JD,,,"1,8,9,6,3,7,2,4,5",,,
-Chestnut oak,JD,,,"5,1,3",,,
-Pin Oak,MEM,"Y",,"1,6",Y,,
-Red oak,JD,,,"4,9,3,7,6",,,
-Post oak,MEM,,,"8,6",Y,,
-Black oak,MESc,"Y","7",7,Y,,
-Bitternut Hickory,MEM,,,"4,6,3,5",,,Y
-Pignut Hickory,MF,"Y",,"1,9",Y,Y,
-Shagbark Hickory,"MEM, MAR","Y",,"8,2,1,6,5,7,9,3,4",,,
-Mockernut Hickory,MEM,,,"6,4,7,3,2,5,5,4,9",,,
-Black walnut,MEM,,,"2,8,6",Y,Y,
-Buttonbush,JD,,"5",5,Y,,
-Northern Catalpa,MEM,,,"2,2,2,6,2,6,2,6,2",,Y,
-White ash,MEM,,,"5,3,4",Y,Y,
-Spicebush,MEM,,,"7,2,5,3",,,Y
-Sassafras,MEM,"Y","7","7,4,3",Y,Y,
-Tulip Poplar,MEM,,,"4,6",Y,Y,
-Magnolias,MEM,,,"7,3,2,5,4",Y,Y,
-Basswood,MEM,,,"7,4,2,3,6,8,5,9,1",Y,Y,
-Atlantic white cedar,JD,,,"2,4,6,3,5",,,
-Eastern Red Cedar,"MEM, Mdiv",,"8","8,1,2,6,5,9,7,4,3",Y,,
-Arborvitae,MESc,,,"2,4",,Y,
-Spruces,MEM,,,"4,6,3,5,7,8,9,1,2",,,Y
-White pine,MESc,,,"8,3,7,2,6",,,
-Eastern hemlock,MEM,,,"2,8,7,6,1",,,
-American sycamore,MPH,"Y",,"3,6,8,2,5",Y,,
-Japanese Barberry,MEM,,,"4,6,7,8,2,3",,,
-Autumn Olive,MEM,,,"2,7,8,2,4,1,6,9,5",,Y,
+name,degrees,admitted,assign,rankings,in_final_year,for_capstone,is_previously_unsuccessful,is_returning,bidding_rank
+Winterberry Holly,JD,,"1","1,2,3",,,,,2
+Oriental Bittersweet,PhD,,,"4,8,5,2",,,,,1
+Burning Bush,MESc,,,"6,7,8,3,2,4",,,,,1
+Flowering Dogwood ,MF,"Y",,"1,5,9",Y,,Y,Y,1
+Shrub Dogwood,MEM,,,"2,5,3",Y,Y,,,1
+Tupelo,MEM,,"3","3,2,5,1,9,8,6,4,7",Y,Y,,,1
+Mapleleaf viburnum,MEM,,"3",3,Y,Y,,,1
+Arrowbush,JD,"Y","1","1,9",,,Y,Y,1
+Sweet pepperbush,JD,,,"1,6,3,4,7,5,2,9",,,,,1
+Huckleberry,JD,,,"6,4,8,1,2,7,8,5,9",,,,,1
+Mountain Laurel,JD,,,"1,6,7",,,,,2
+Highbush blueberry,JD,"Y","1",1,,,Y,Y,2
+Lowbush Blueberry,"MEM, MBA",,,4,,,Y,,1
+(rare) Lowbush Blueberry,MEM,,,"8,6,2,4",,,Y,,1
+Speckled Alder,"JD, MEM","Y",,"6,2,1,3,8",,,Y,Y,1
+Black Birch,JD,"Y",,"9,1,4,6,7,8,3,2,5",,,,,3
+Grey Birch,JD,,,"9,1",,,,,1
+Hophornbeam,JD,,"9","9,4,3,8,6",,,,,1
+American beech,"JD, MEM","Y",,"4,9,1,5",Y,,Y,Y,1
+White Oak,MEM,,"4",4,,,Y,,1
+Swamp white oak,JD,,,"4,3,7",,,,,1
+Scarlet oak,JD,,,"1,8,9,6,3,7,2,4,5",,,,,3
+Chestnut oak,JD,,,"5,1,3",,,,,3
+Pin Oak,MEM,"Y",,"1,6",Y,,Y,Y,1
+Red oak,JD,,,"4,9,3,7,6",,,,,2
+Post oak,MEM,,,"8,6",Y,,,,1
+Black oak,MESc,"Y","7",7,Y,,Y,Y,1
+Bitternut Hickory,MEM,,,"4,6,3,5",,,Y,,1
+Pignut Hickory,MF,"Y",,"1,9",Y,Y,Y,Y,1
+Shagbark Hickory,"MEM, MAR","Y",,"8,2,1,6,5,7,9,3,4",,,,,1
+Mockernut Hickory,MEM,,,"6,4,7,3,2,5,5,4,9",,,,,1
+Black walnut,MEM,,,"2,8,6",Y,Y,,,1
+Buttonbush,JD,,"5",5,Y,,Y,Y,1
+Northern Catalpa,MEM,,,"2,2,2,6,2,6,2,6,2",,Y,,,1
+White ash,MEM,,,"5,3,4",Y,Y,,,1
+Spicebush,MEM,,,"7,2,5,3",,,Y,,1
+Sassafras,MEM,"Y","7","7,4,3",Y,Y,,,1
+Tulip Poplar,MEM,,,"4,6",Y,Y,,,1
+Magnolias,MEM,,,"7,3,2,5,4",Y,Y,,,1
+Basswood,MEM,,,"7,4,2,3,6,8,5,9,1",Y,Y,,,1
+Atlantic white cedar,JD,,,"2,4,6,3,5",,,,,1
+Eastern Red Cedar,"MEM, Mdiv",,"8","8,1,2,6,5,9,7,4,3",Y,,,,1
+Arborvitae,MESc,,,"2,4",,Y,,,1
+Spruces,MEM,,,"4,6,3,5,7,8,9,1,2",,,Y,,1
+White pine,MESc,,,"8,3,7,2,6",,,,,1
+Eastern hemlock,MEM,,,"2,8,7,6,1",,,,,1
+American sycamore,MPH,"Y",,"3,6,8,2,5",Y,,,,1
+Japanese Barberry,MEM,,,"4,6,7,8,2,3",,,,,1
+Autumn Olive,MEM,,,"2,7,8,2,4,1,6,9,5",,Y,,,1

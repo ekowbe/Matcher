@@ -1,10 +1,10 @@
-name,cap,min_num_law_students
-Tribal Sovereignty and Environmental Protection Litigation,3,2
-Operationalizing a Just Transition & Regenerative Economies,3,1
-Advancing Energy Justice Through the Transformation of Public Utility Commissions,3,2
-Regulating New Ocean-based Carbon Dioxide Removal Technologies,3,2
-Equitably Managing Climate Risk for Small and Community Banks,3,1
-Forest Degradation Legislative Campaign,2,1
-Leveraging Spatial Data to Fight For Water Affordability and Against Shutoffs and Debt,3,0
-Advancing Environmental Justice and Public Health in Connecticut,3,1
-Landmark Atmospheric Trust Litigation,3,3
+name,cap,min_law,min_non_law
+Tribal Sovereignty and Environmental Protection Litigation,3,2,0
+Operationalizing a Just Transition & Regenerative Economies,3,1,1
+Advancing Energy Justice Through the Transformation of Public Utility Commissions,3,2,1
+Regulating New Ocean-based Carbon Dioxide Removal Technologies,3,2,1
+Equitably Managing Climate Risk for Small and Community Banks,3,1,1
+Forest Degradation Legislative Campaign,2,1,1
+Leveraging Spatial Data to Fight For Water Affordability and Against Shutoffs and Debt,3,0,2
+Advancing Environmental Justice and Public Health in Connecticut,3,1,1
+Landmark Atmospheric Trust Litigation,3,3,0
